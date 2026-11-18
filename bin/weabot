@@ -27,16 +27,16 @@ when "pairing"
   puts "Starting #{cfg.bot_name} in Pairing Code mode for #{phone}..."
   WeabotRuby::Bot.new(cfg).start(blocking: true)
 when "setup-bridge"
-  bridge_dir = File.dirname(BaileysRec::Transport::BridgeAdapter::DEFAULT_WORKER_PATH)
+  bridge_dir = File.dirname(WhatsappWebRuby::Transport::BridgeAdapter::DEFAULT_WORKER_PATH)
   puts "Installing Node.js bridge dependencies in #{bridge_dir}..."
   ok = system("npm", "install", "--omit=dev", "--no-bin-links", "--no-audit", "--no-fund", chdir: bridge_dir)
   abort "npm install failed in #{bridge_dir}" unless ok
   puts "Bridge dependencies installed successfully."
 when "version"
-  puts "weabot-ruby (baileys_rec #{BaileysRec::VERSION})"
+  puts "weabot-ruby (whatsapp-web-ruby #{WhatsappWebRuby::VERSION})"
 else
   puts <<~HELP
-    Weabot Ruby CLI (powered by baileys_rec #{BaileysRec::VERSION})
+    Weabot Ruby CLI (powered by whatsapp-web-ruby #{WhatsappWebRuby::VERSION})
 
     Usage (works on Linux, macOS, Docker, and Termux /sdcard):
       bundle exec ruby bin/weabot start [--mode bridge|cloud_api|memory] [--port 4567]

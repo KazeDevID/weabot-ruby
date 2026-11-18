@@ -1,15 +1,15 @@
 # weabot-ruby
 
-Bot WhatsApp modular berbahasa Ruby yang ditenagai oleh [`KazeDevID/baileys-rec-rb`](https://github.com/KazeDevID/baileys-rec-rb) — versi Ruby dari `baileys-rec`.
+Bot WhatsApp modular berbahasa Ruby yang ditenagai oleh [`KazeDevID/whatsapp-web-ruby`](https://github.com/KazeDevID/whatsapp-web-ruby).
 
-Dirancang dengan arsitektur plugin modular (`plugins/*.rb`), konfigurasi non-global (`config/bot.rb`), database JSON atomik (`lib/database.rb`), antrean broadcast anti-ban (`BaileysRec::Automation::Dispatcher`), serta REST API & Webhook Server (`BaileysRec::Automation::WebhookServer`).
+Dirancang dengan arsitektur plugin modular (`plugins/*.rb`), konfigurasi non-global (`config/bot.rb`), database JSON atomik (`lib/database.rb`), antrean broadcast anti-ban (`WhatsappWebRuby::Automation::Dispatcher`), serta REST API & Webhook Server (`WhatsappWebRuby::Automation::WebhookServer`).
 
 ## Fitur Utama
 
 - **Dual Login WhatsApp Multi-Device**: Scan QR di terminal atau gunakan **Pairing Code 8-karakter**.
 - **Mode Fleksibel**: Mendukung `:bridge` (WhatsApp Web Multi-Device), `:cloud_api` (Meta Cloud API pure-Ruby tanpa Node.js), dan `:memory` (simulasi/testing).
 - **Modular Plugin Handler (`plugins/*.rb`)**: Mendukung hot-reload dengan `!reload` tanpa memutus koneksi socket.
-- **Full `baileys_rec` Interactive UI**:
+- **Full `whatsapp-web-ruby` Interactive UI**:
   - `!menu`: Menu simpel per kategori + Single Select Interactive Button.
   - `!demo`, `!otp`, `!carousel`, `!flow`, `!rich`: Showcase lengkap `Button`, `Carousel`, `FlowBuilder` v3.1, `AIRich`, dan OTP Copy Code.
   - `!calc`: Kalkulator matematika aman (recursive-descent parser, tanpa `eval`).

@@ -59,15 +59,15 @@ module WeabotRuby
     end
 
     def button_builder
-      BaileysRec::Button.new(@socket)
+      WhatsappWebRuby::Button.new(@socket)
     end
 
     def carousel_builder
-      BaileysRec::Carousel.new(@socket)
+      WhatsappWebRuby::Carousel.new(@socket)
     end
 
     def rich_builder
-      BaileysRec::AIRich.new(@socket)
+      WhatsappWebRuby::AIRich.new(@socket)
     end
   end
 

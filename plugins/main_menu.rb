@@ -22,9 +22,9 @@ WeabotRuby.define_plugin "main_menu" do
                  .set_title(ctx.config.bot_name)
                  .set_subtitle("Mode: #{ctx.config.mode.to_s.upcase}")
                  .set_body(body)
-                 .set_footer("Powered by baileys_rec Ruby v#{BaileysRec::VERSION}")
+                 .set_footer("Powered by whatsapp-web-ruby Ruby v#{WhatsappWebRuby::VERSION}")
                  .add_selection("Pilih Demo Fitur")
-                 .make_section("Showcase baileys_rec", "Populer")
+                 .make_section("Showcase whatsapp-web-ruby", "Populer")
                  .make_row("Button & OTP", "Demo Interactive Button", "Lihat tombol Reply, URL, dan OTP", "menu_demo_button")
                  .make_row("Carousel", "Demo Swipeable Carousel", "Lihat kartu produk geser", "menu_demo_carousel")
                  .make_row("Flow v3.1", "Demo WhatsApp Flow", "Form interaktif Flow v3.1", "menu_demo_flow")
@@ -42,7 +42,7 @@ WeabotRuby.define_plugin "main_menu" do
          .set_body("Contoh tombol OTP, URL, dan Quick Reply.")
          .add_otp("829104", "Salin Kode OTP")
          .add_reply("Ping Bot", "quick_ping")
-         .add_url("Library Ruby", "https://github.com/KazeDevID/baileys-rec-rb")
+         .add_url("Library Ruby", "https://github.com/KazeDevID/whatsapp-web-ruby")
          .send(ctx.jid)
     when "menu_demo_carousel"
       c1 = ctx.button_builder.set_title("Paket Starter").set_body("1 Worker + REST API").add_reply("Pilih Starter", "plan_starter")
@@ -53,7 +53,7 @@ WeabotRuby.define_plugin "main_menu" do
          .add_card([c1, c2])
          .send(ctx.jid)
     when "menu_demo_flow"
-      flow = BaileysRec::FlowBuilder.new("weabot_feedback_v3", "Form Feedback")
+      flow = WhatsappWebRuby::FlowBuilder.new("weabot_feedback_v3", "Form Feedback")
                                     .add_screen("FEEDBACK_1", "Penilaian Layanan")
                                     .add_text_input("nama", "Nama Lengkap", required: true)
                                     .add_dropdown("rating", "Rating", %w[Sangat\ Puas Puas Cukup])
@@ -66,8 +66,8 @@ WeabotRuby.define_plugin "main_menu" do
          .send(ctx.jid)
     when "menu_demo_rich"
       ctx.rich_builder
-         .add_text("Contoh pesan *AI Rich* dengan [Docs](https://github.com/KazeDevID/baileys-rec-rb):")
-         .add_code("ruby", "sock = BaileysRec.make_wa_socket(mode: :bridge)\nsock.send_message(jid, { text: 'Halo' })")
+         .add_text("Contoh pesan *AI Rich* dengan [Docs](https://github.com/KazeDevID/whatsapp-web-ruby):")
+         .add_code("ruby", "sock = WhatsappWebRuby.make_wa_socket(mode: :bridge)\nsock.send_message(jid, { text: 'Halo' })")
          .add_table(["Status Bot", "Modul | Status", "Router | Aktif;;Dispatcher | Aktif"])
          .send(ctx.jid)
     end

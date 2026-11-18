@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "baileys_rec"
+require "whatsapp-web-ruby"
 
 module WeabotRuby
   # Non-global immutable/encapsulated bot configuration.
@@ -38,7 +38,7 @@ module WeabotRuby
     end
 
     def owner?(jid_or_phone)
-      clean = BaileysRec.sanitize_whatsapp_number(jid_or_phone)
+      clean = WhatsappWebRuby.sanitize_whatsapp_number(jid_or_phone)
       @owners.include?(clean)
     end
 
@@ -53,7 +53,7 @@ module WeabotRuby
 
     def parse_owners(raw)
       list = raw.is_a?(Array) ? raw : raw.to_s.split(",")
-      list.map { |item| BaileysRec.sanitize_whatsapp_number(item) }.reject(&:empty?).uniq
+      list.map { |item| WhatsappWebRuby.sanitize_whatsapp_number(item) }.reject(&:empty?).uniq
     end
 
     def load_dotenv!

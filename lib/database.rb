@@ -16,7 +16,7 @@ module WeabotRuby
     end
 
     def user(jid)
-      key = BaileysRec::Utils::Jid.jid_normalized_user(jid)
+      key = WhatsappWebRuby::Utils::Jid.jid_normalized_user(jid)
       @mutex.synchronize do
         @data["users"][key] ||= {
           "jid" => key,
@@ -30,7 +30,7 @@ module WeabotRuby
     end
 
     def touch_user(jid, push_name = "")
-      key = BaileysRec::Utils::Jid.jid_normalized_user(jid)
+      key = WhatsappWebRuby::Utils::Jid.jid_normalized_user(jid)
       @mutex.synchronize do
         entry = (@data["users"][key] ||= {
           "jid" => key,

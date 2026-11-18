@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "baileys_rec"
+require "whatsapp-web-ruby"
 require_relative "../config/bot"
 require_relative "database"
 require_relative "plugin_manager"
@@ -19,7 +19,7 @@ module WeabotRuby
       persisted_mode = @db.setting("bot_mode")
       @config.mode = persisted_mode.to_sym if persisted_mode
 
-      @socket = BaileysRec.make_wa_socket(
+      @socket = WhatsappWebRuby.make_wa_socket(
         mode: @config.transport_mode,
         auth_folder: @config.auth_folder,
         print_qr_in_terminal: @config.print_qr && @config.pairing_number.empty?,
@@ -28,7 +28,7 @@ module WeabotRuby
         adapter: socket_adapter
       )
 
-      @dispatcher = BaileysRec::Automation::Dispatcher.new(
+      @dispatcher = WhatsappWebRuby::Automation::Dispatcher.new(
         socket: @socket,
         per_jid_interval: @config.per_jid_interval,
         max_attempts: @config.max_retry_attempts,
@@ -39,7 +39,7 @@ module WeabotRuby
       reload_plugins!
 
       @webhook_server = if @config.api_enabled
-                          BaileysRec::Automation::WebhookServer.new(
+                          WhatsappWebRuby::Automation::WebhookServer.new(
                             socket: @socket,
                             dispatcher: @dispatcher,
                             host: @config.api_host,
@@ -110,9 +110,9 @@ module WeabotRuby
 
       messages = upsert.is_a?(Hash) ? (upsert["messages"] || upsert[:messages] || []) : Array(upsert)
       messages.each do |raw|
-        msg = BaileysRec.serialize_message(raw)
+        msg = WhatsappWebRuby.serialize_message(raw)
         next unless msg
-        next if BaileysRec::Utils::Jid.status_broadcast?(msg[:from])
+        next if WhatsappWebRuby::Utils::Jid.status_broadcast?(msg[:from])
 
         if msg[:from_me]
           next if @socket.sent_by_me?(msg[:id])
@@ -149,7 +149,7 @@ module WeabotRuby
         me = update["me"]
 
         if me.is_a?(Hash) && @config.owners == ["6281234567890"]
-          own_num = BaileysRec.sanitize_whatsapp_number(me["id"])
+          own_num = WhatsappWebRuby.sanitize_whatsapp_number(me["id"])
           @config.owners << own_num unless own_num.empty? || @config.owners.include?(own_num)
         end
 
@@ -168,7 +168,7 @@ module WeabotRuby
 
       @socket.ev.on(:bridge_log) do |entry|
         msg = entry.is_a?(Hash) ? entry[:message] : entry.to_s
-        warn "[BaileysRec::Bridge] #{msg}" unless msg.to_s.empty?
+        warn "[WhatsappWebRuby::Bridge] #{msg}" unless msg.to_s.empty?
       end
 
       @socket.ev.on(:messages_upsert) do |upsert|

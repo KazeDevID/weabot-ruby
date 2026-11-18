@@ -20,7 +20,7 @@ task :pairing, [:phone] do |_t, args|
   exec "ruby", File.expand_path("bin/weabot", __dir__), "pairing", args[:phone].to_s
 end
 
-desc "Install Node.js dependencies for baileys_rec bridge"
+desc "Install Node.js dependencies for whatsapp-web-ruby bridge"
 task :setup_bridge do
   exec "ruby", File.expand_path("bin/weabot", __dir__), "setup-bridge"
 end

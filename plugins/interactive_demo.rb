@@ -30,7 +30,7 @@ WeabotRuby.define_plugin "interactive_demo" do
          .add_card([card1, card2])
          .send(ctx.jid)
     when "flow"
-      flow = BaileysRec::FlowBuilder.new("order_form_v3", "Form Pemesanan")
+      flow = WhatsappWebRuby::FlowBuilder.new("order_form_v3", "Form Pemesanan")
                                     .add_screen("ORDER_1", "Data Pembeli")
                                     .add_text_input("customer_name", "Nama Penerima", required: true)
                                     .add_dropdown("courier", "Kurir", %w[JNE J&T SiCepat])
@@ -43,8 +43,8 @@ WeabotRuby.define_plugin "interactive_demo" do
          .send(ctx.jid)
     when "rich"
       ctx.rich_builder
-         .add_text("Dokumentasi cepat [baileys_rec](https://github.com/KazeDevID/baileys-rec-rb):")
-         .add_code("ruby", "BaileysRec::Button.new(sock).set_title('Hi').add_otp('123456').send(jid)")
+         .add_text("Dokumentasi cepat [whatsapp-web-ruby](https://github.com/KazeDevID/whatsapp-web-ruby):")
+         .add_code("ruby", "WhatsappWebRuby::Button.new(sock).set_title('Hi').add_otp('123456').send(jid)")
          .add_table(["Fitur", "Nama | Status", "Button | Siap;;Carousel | Siap;;Flow v3 | Siap"])
          .send(ctx.jid)
     else

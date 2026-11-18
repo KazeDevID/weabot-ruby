@@ -21,7 +21,7 @@ WeabotRuby.define_plugin "group_admin" do
 
       action = ctx.command == "kick" ? "remove" : ctx.command
       ctx.socket.group_participants_update(ctx.jid, [target], action)
-      ctx.reply("Berhasil menjalankan *#{action}* pada #{BaileysRec.sanitize_whatsapp_number(target)}.")
+      ctx.reply("Berhasil menjalankan *#{action}* pada #{WhatsappWebRuby.sanitize_whatsapp_number(target)}.")
     end
   end
 end

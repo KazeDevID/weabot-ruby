@@ -9,7 +9,7 @@ WeabotRuby.define_plugin "owner_broadcast" do
       next ctx.reply("Contoh: #{ctx.config.prefix}broadcast Promo akhir pekan aktif sekarang!")
     end
 
-    targets = ctx.db.known_user_jids.reject { |j| j == BaileysRec::Utils::Jid.jid_normalized_user(ctx.sender) }
+    targets = ctx.db.known_user_jids.reject { |j| j == WhatsappWebRuby::Utils::Jid.jid_normalized_user(ctx.sender) }
     if targets.empty?
       next ctx.reply("Belum ada user lain di database untuk di-broadcast.")
     end

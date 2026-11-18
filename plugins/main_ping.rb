@@ -12,7 +12,7 @@ WeabotRuby.define_plugin "main_ping" do
       "*Pong!*\n" \
       "• Response: #{elapsed_ms} ms\n" \
       "• Ruby: #{RUBY_VERSION}\n" \
-      "• baileys_rec: #{BaileysRec::VERSION}\n" \
+      "• whatsapp-web-ruby: #{WhatsappWebRuby::VERSION}\n" \
       "• Queue Sent: #{stats[:sent]} | Pending: #{ctx.dispatcher.pending_count}"
     )
   end
