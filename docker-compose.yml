@@ -1,0 +1,13 @@
+services:
+  weabot:
+    build: .
+    container_name: weabot-ruby
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./auth_info:/app/auth_info
+      - ./data:/app/data
+      - ./plugins:/app/plugins

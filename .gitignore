@@ -1,0 +1,9 @@
+.env
+auth_info/
+auth_info*/
+data/
+tmp/
+*.gem
+.bundle/
+vendor/bundle/
+node_modules/
