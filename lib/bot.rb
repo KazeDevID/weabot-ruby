@@ -60,16 +60,22 @@ module WeabotRuby
 
     def start(blocking: true)
       @pairing_requested = false
+      @stop_requested = false
       attach_socket_events
       @dispatcher.start
-      @socket.connect
+      init_res = @socket.connect
+      if init_res.is_a?(Hash) && init_res["version"]
+        puts "[WeabotRuby] WA Web Version: #{Array(init_res['version']).join('.')}"
+      end
 
       @webhook_server&.start(blocking: false)
 
       if blocking
-        trap("INT") { shutdown_and_exit }
-        trap("TERM") { shutdown_and_exit }
-        sleep
+        trap("INT") { @stop_requested = true }
+        trap("TERM") { @stop_requested = true }
+        sleep 0.2 until @stop_requested
+        puts "\n[WeabotRuby] Shutting down gracefully..."
+        stop
       end
       self
     end
@@ -86,7 +92,7 @@ module WeabotRuby
 
       @pairing_requested = true
       Thread.new do
-        sleep 0.5
+        sleep 1.0
         res = @socket.request_pairing_code(phone_number)
         puts "\n[WeabotRuby] ====================================="
         puts "[WeabotRuby] Pairing Code (#{res['phoneNumber']}): #{res['code']}"
@@ -122,22 +128,32 @@ module WeabotRuby
         conn = update["connection"] || update[:connection]
         qr = update["qr"] || update[:qr]
         registered = update["registered"]
-        puts "[WeabotRuby] Connection update: #{conn}" if conn
+        status_code = update["statusCode"]
+        err_msg = update["error"]
 
-        if @config.transport_mode == :bridge && !@config.pairing_number.empty? && qr && !registered && !@pairing_requested
-          request_pairing!(@config.pairing_number)
+        if conn
+          details = []
+          details << "code=#{status_code}" if status_code
+          details << "error=#{err_msg}" if err_msg
+          suffix = details.empty? ? "" : " (#{details.join(', ')})"
+          puts "[WeabotRuby] Connection update: #{conn}#{suffix}"
         end
+
+        if @config.transport_mode == :bridge && !@config.pairing_number.empty? && !registered && !@pairing_requested
+          if qr || conn == "connecting"
+            request_pairing!(@config.pairing_number)
+          end
+        end
+      end
+
+      @socket.ev.on(:bridge_log) do |entry|
+        msg = entry.is_a?(Hash) ? entry[:message] : entry.to_s
+        warn "[BaileysRec::Bridge] #{msg}" unless msg.to_s.empty?
       end
 
       @socket.ev.on(:messages_upsert) do |upsert|
         handle_messages_upsert(upsert)
       end
-    end
-
-    def shutdown_and_exit
-      puts "\n[WeabotRuby] Shutting down gracefully..."
-      stop
-      exit(0)
     end
   end
 end
