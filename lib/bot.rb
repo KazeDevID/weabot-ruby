@@ -92,7 +92,7 @@ module WeabotRuby
 
       @pairing_requested = true
       Thread.new do
-        sleep 1.0
+        sleep 0.3
         res = @socket.request_pairing_code(phone_number)
         puts "\n[WeabotRuby] ====================================="
         puts "[WeabotRuby] Pairing Code (#{res['phoneNumber']}): #{res['code']}"
@@ -139,10 +139,8 @@ module WeabotRuby
           puts "[WeabotRuby] Connection update: #{conn}#{suffix}"
         end
 
-        if @config.transport_mode == :bridge && !@config.pairing_number.empty? && !registered && !@pairing_requested
-          if qr || conn == "connecting"
-            request_pairing!(@config.pairing_number)
-          end
+        if @config.transport_mode == :bridge && !@config.pairing_number.empty? && qr && !registered && !@pairing_requested
+          request_pairing!(@config.pairing_number)
         end
       end
 
