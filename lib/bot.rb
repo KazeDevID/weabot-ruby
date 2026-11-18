@@ -59,13 +59,10 @@ module WeabotRuby
     end
 
     def start(blocking: true)
+      @pairing_requested = false
       attach_socket_events
       @dispatcher.start
       @socket.connect
-
-      if @config.transport_mode == :bridge && !@config.pairing_number.empty?
-        request_pairing!(@config.pairing_number)
-      end
 
       @webhook_server&.start(blocking: false)
 
@@ -85,11 +82,18 @@ module WeabotRuby
     end
 
     def request_pairing!(phone_number)
+      return if @pairing_requested
+
+      @pairing_requested = true
       Thread.new do
-        sleep 2.0
+        sleep 0.5
         res = @socket.request_pairing_code(phone_number)
+        puts "\n[WeabotRuby] ====================================="
         puts "[WeabotRuby] Pairing Code (#{res['phoneNumber']}): #{res['code']}"
+        puts "[WeabotRuby] Buka WhatsApp -> Perangkat Tertaut -> Tautkan dengan Nomor Telepon"
+        puts "[WeabotRuby] =====================================\n"
       rescue StandardError => e
+        @pairing_requested = false
         warn "[WeabotRuby] Failed requesting pairing code: #{e.message}"
       end
     end
@@ -113,8 +117,16 @@ module WeabotRuby
 
     def attach_socket_events
       @socket.ev.on(:connection_update) do |update|
-        conn = update.is_a?(Hash) ? (update["connection"] || update[:connection]) : nil
+        next unless update.is_a?(Hash)
+
+        conn = update["connection"] || update[:connection]
+        qr = update["qr"] || update[:qr]
+        registered = update["registered"]
         puts "[WeabotRuby] Connection update: #{conn}" if conn
+
+        if @config.transport_mode == :bridge && !@config.pairing_number.empty? && qr && !registered && !@pairing_requested
+          request_pairing!(@config.pairing_number)
+        end
       end
 
       @socket.ev.on(:messages_upsert) do |upsert|

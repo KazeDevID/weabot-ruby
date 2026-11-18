@@ -43,23 +43,24 @@ cp .env.example .env
 bundle install
 ```
 
-Jika menggunakan mode `:bridge` (WhatsApp Multi-Device), install dependensi Node.js pada bridge gem sekali saja:
+> **Catatan Termux / Android (`/sdcard`)**: Filesystem `/sdcard` tidak mendukung permission eksekusi (`+x`), sehingga `bundle exec bin/weabot` akan memunculkan `not executable: bin/weabot`. Jalankan selalu dengan `bundle exec ruby bin/weabot ...` (atau `bundle exec ruby start.rb ...`). Untuk performa `npm install` & `bundle install` terbaik di Termux, disarankan clone ke `$HOME/weabot-ruby`.
+
+Install dependensi Node.js pada bridge gem sekali saja (otomatis juga dijalankan saat pertama start jika belum ada):
 
 ```bash
-BRIDGE_DIR=$(bundle exec ruby -e 'puts File.expand_path("baileys_rec/bridge", File.dirname(Gem.loaded_specs["baileys_rec"].full_require_paths.first))')
-cd "$BRIDGE_DIR" && npm install --omit=dev
+bundle exec ruby bin/weabot setup-bridge
 ```
 
 Jalankan bot dengan QR Code:
 
 ```bash
-bundle exec bin/weabot start
+bundle exec ruby bin/weabot start
 ```
 
 Atau jalankan dengan Pairing Code (tanpa scan QR):
 
 ```bash
-bundle exec bin/weabot pairing 6281234567890
+bundle exec ruby bin/weabot pairing 6281234567890
 ```
 
 ## Pengujian

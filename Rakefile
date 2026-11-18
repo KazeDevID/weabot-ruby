@@ -9,4 +9,20 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
+desc "Start Weabot Ruby"
+task :start do
+  exec "ruby", File.expand_path("bin/weabot", __dir__), "start"
+end
+
+desc "Start Weabot Ruby with Pairing Code: rake 'pairing[6281234567890]'"
+task :pairing, [:phone] do |_t, args|
+  abort "Usage: bundle exec rake 'pairing[6281234567890]'" if args[:phone].to_s.empty?
+  exec "ruby", File.expand_path("bin/weabot", __dir__), "pairing", args[:phone].to_s
+end
+
+desc "Install Node.js dependencies for baileys_rec bridge"
+task :setup_bridge do
+  exec "ruby", File.expand_path("bin/weabot", __dir__), "setup-bridge"
+end
+
 task default: :test

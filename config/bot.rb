@@ -13,6 +13,7 @@ module WeabotRuby
                   :phone_number_id, :access_token, :db_path, :plugins_dir
 
     def initialize(overrides = {})
+      load_dotenv!
       @bot_name = env_or("BOT_NAME", "Weabot Ruby", overrides[:bot_name])
       @prefix = env_or("BOT_PREFIX", "!", overrides[:prefix])
       @mode = env_or("BOT_MODE", "public", overrides[:mode]).to_sym
@@ -52,6 +53,22 @@ module WeabotRuby
     def parse_owners(raw)
       list = raw.is_a?(Array) ? raw : raw.to_s.split(",")
       list.map { |item| BaileysRec.sanitize_whatsapp_number(item) }.reject(&:empty?).uniq
+    end
+
+    def load_dotenv!
+      env_file = File.expand_path("../.env", __dir__)
+      return unless File.exist?(env_file)
+
+      File.readlines(env_file, encoding: "UTF-8").each do |line|
+        trimmed = line.strip
+        next if trimmed.empty? || trimmed.start_with?("#")
+
+        key, val = trimmed.split("=", 2)
+        next unless key && val
+
+        clean_val = val.strip.sub(/\A(["'])(.*)\1\z/, '\2')
+        ENV[key.strip] ||= clean_val
+      end
     end
   end
 end

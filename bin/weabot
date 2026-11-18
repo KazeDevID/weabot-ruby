@@ -22,18 +22,26 @@ when "start"
   WeabotRuby::Bot.new(cfg).start(blocking: true)
 when "pairing"
   phone = ARGV.shift || overrides[:pairing_number]
-  abort "Usage: weabot pairing <6281234567890>" if phone.to_s.empty?
+  abort "Usage: bundle exec ruby bin/weabot pairing <6281234567890>" if phone.to_s.empty?
   cfg = WeabotRuby::Config.new(overrides.merge(pairing_number: phone, print_qr: false))
+  puts "Starting #{cfg.bot_name} in Pairing Code mode for #{phone}..."
   WeabotRuby::Bot.new(cfg).start(blocking: true)
+when "setup-bridge"
+  bridge_dir = File.dirname(BaileysRec::Transport::BridgeAdapter::DEFAULT_WORKER_PATH)
+  puts "Installing Node.js bridge dependencies in #{bridge_dir}..."
+  ok = system("npm", "install", "--omit=dev", "--no-bin-links", "--no-audit", "--no-fund", chdir: bridge_dir)
+  abort "npm install failed in #{bridge_dir}" unless ok
+  puts "Bridge dependencies installed successfully."
 when "version"
   puts "weabot-ruby (baileys_rec #{BaileysRec::VERSION})"
 else
   puts <<~HELP
     Weabot Ruby CLI (powered by baileys_rec #{BaileysRec::VERSION})
 
-    Usage:
-      bin/weabot start [--mode bridge|cloud_api|memory] [--port 4567]
-      bin/weabot pairing <6281234567890>
-      bin/weabot version
+    Usage (works on Linux, macOS, Docker, and Termux /sdcard):
+      bundle exec ruby bin/weabot start [--mode bridge|cloud_api|memory] [--port 4567]
+      bundle exec ruby bin/weabot pairing <6281234567890>
+      bundle exec ruby bin/weabot setup-bridge
+      bundle exec ruby bin/weabot version
   HELP
 end
