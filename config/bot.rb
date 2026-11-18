@@ -5,7 +5,7 @@ require "baileys_rec"
 module WeabotRuby
   # Non-global immutable/encapsulated bot configuration.
   class Config
-    attr_accessor :bot_name, :prefix, :mode, :owners, :transport_mode,
+    attr_accessor :bot_name, :prefix, :mode, :owners, :allow_from_me, :transport_mode,
                   :auth_folder, :pairing_number, :print_qr,
                   :per_jid_interval, :max_retry_attempts,
                   :api_enabled, :api_host, :api_port, :api_key,
@@ -18,6 +18,7 @@ module WeabotRuby
       @prefix = env_or("BOT_PREFIX", "!", overrides[:prefix])
       @mode = env_or("BOT_MODE", "public", overrides[:mode]).to_sym
       @owners = parse_owners(overrides[:owners] || ENV.fetch("OWNER_NUMBERS", "6281234567890"))
+      @allow_from_me = overrides.key?(:allow_from_me) ? overrides[:allow_from_me] : ENV.fetch("ALLOW_FROM_ME", "true") == "true"
       @transport_mode = env_or("TRANSPORT_MODE", "bridge", overrides[:transport_mode]).to_sym
       @auth_folder = env_or("AUTH_FOLDER", "./auth_info", overrides[:auth_folder])
       @pairing_number = env_or("PAIRING_NUMBER", "", overrides[:pairing_number])

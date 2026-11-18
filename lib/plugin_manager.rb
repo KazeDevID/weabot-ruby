@@ -38,7 +38,9 @@ module WeabotRuby
     end
 
     def owner?
-      @config.owner?(sender)
+      @config.owner?(sender) ||
+        @config.owner?(@message[:sender_alt]) ||
+        (@message[:from_me] && @config.allow_from_me)
     end
 
     def reply(content, options = {})

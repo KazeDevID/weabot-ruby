@@ -105,18 +105,34 @@ module WeabotRuby
     end
 
     def handle_messages_upsert(upsert)
+      upsert_type = upsert.is_a?(Hash) ? (upsert["type"] || upsert[:type]) : nil
+      return if upsert_type && upsert_type.to_s != "notify"
+
       messages = upsert.is_a?(Hash) ? (upsert["messages"] || upsert[:messages] || []) : Array(upsert)
       messages.each do |raw|
         msg = BaileysRec.serialize_message(raw)
         next unless msg
-        next if msg[:from_me]
-        next if @config.mode == :self && !@config.owner?(msg[:sender])
+        next if BaileysRec::Utils::Jid.status_broadcast?(msg[:from])
+
+        if msg[:from_me]
+          next if @socket.sent_by_me?(msg[:id])
+          next unless @config.allow_from_me
+
+          body_str = msg[:body].to_s.strip
+          next unless body_str.start_with?(@config.prefix) || msg[:interactive]
+        end
+
+        is_owner = msg[:from_me] || @config.owner?(msg[:sender]) || @config.owner?(msg[:sender_alt])
+        next if @config.mode == :self && !is_owner
 
         @db.touch_user(msg[:sender], msg[:push_name])
-        @plugin_manager.dispatch(self, msg)
+        matched = @plugin_manager.dispatch(self, msg)
+        if matched
+          puts "[WeabotRuby] Executed #{msg[:from_me] ? '(self) ' : ''}#{msg[:sender]}: #{msg[:body].inspect}"
+        end
       end
     rescue StandardError => e
-      warn "[WeabotRuby] Error dispatching message: #{e.class} - #{e.message}"
+      warn "[WeabotRuby] Error dispatching message: #{e.class} - #{e.message}\n#{e.backtrace&.first(3)&.join("\n")}"
     end
 
     private
@@ -130,6 +146,12 @@ module WeabotRuby
         registered = update["registered"]
         status_code = update["statusCode"]
         err_msg = update["error"]
+        me = update["me"]
+
+        if me.is_a?(Hash) && @config.owners == ["6281234567890"]
+          own_num = BaileysRec.sanitize_whatsapp_number(me["id"])
+          @config.owners << own_num unless own_num.empty? || @config.owners.include?(own_num)
+        end
 
         if conn
           details = []
